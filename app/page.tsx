@@ -66,7 +66,7 @@ const Combobox = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          className="w-[200px] justify-between p-2 text-xs font-normal text-left"
+          className="w-[200px] justify-between text-xs font-normal text-left"
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -160,19 +160,19 @@ const YourComponent = () => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-4">
+    <div className="bg-white shadow-lg p-4">
       <table className="w-full border-collapse">
         <thead>
           <tr>
-            <th className="p-2 text-sm font-normal text-left"></th>
+            <th className="p-2 text-sm font-normal text-left "></th>
             <th className="p-2 text-sm font-normal text-left">Subject</th>
             <th className="p-2 text-sm font-normal text-left">Difficulty</th>
             <th className="p-2 text-sm font-normal text-left">Enjoyment</th>
             <th className="p-2 text-sm font-normal text-left">Workload</th>
-            <th className="p-2 text-sm font-normal text-left">Rank
+            <th className="p-2 text-sm font-normal text-right">Rank
               <Button
                 onClick={handleSort}
-                className="p-0 bg-transparent border-none"
+                className="bg-transparent border-none"
                 style={{ backgroundColor: 'transparent' }}
               >
                 <ArrowUpDown color="black" size={15} style={{ backgroundColor: 'transparent' }} />
@@ -183,21 +183,21 @@ const YourComponent = () => {
         <tbody>
           {data.map((row, index) => (
             <tr key={index}>
-              <td className="p-2">
-                <Button className="p-0 bg-transparent border-none"
+              <td className="">
+                <Button className="bg-transparent border-none"
                   style={{ backgroundColor: 'transparent' }}
                   onClick={() => handleDeleteRow(index)}><Trash2 color="red" size={15} style={{ backgroundColor: 'transparent' }} /></Button>
               </td>
-              <td className="p-2">
+              <td className="border">
                 <Input
-                  className="p-2 text-xs font-normal text-left"
+                  className="text-xs font-normal text-left"
                   type="text"
                   value={row.subject}
                   onChange={(event) => handleChange(event, index, 'subject')}
                 // className="w-full p-1 border rounded-md"
                 />
               </td>
-              <td className="p-2">
+              <td className="border">
                 <Combobox
                   data={difficultyOptions}
                   value={row.difficulty}
@@ -207,7 +207,7 @@ const YourComponent = () => {
                   handleChange={(event) => handleChange(event, index, 'difficulty')}
                 />
               </td>
-              <td className="p-2">
+              <td className="border">
                 <Combobox
                   data={enjoymentOptions}
                   value={row.enjoyment}
@@ -217,7 +217,7 @@ const YourComponent = () => {
                   handleChange={(event) => handleChange(event, index, 'enjoyment')}
                 />
               </td>
-              <td className="p-2">
+              <td className="border">
                 <Combobox
                   data={workloadOptions}
                   value={row.enjoyment}
@@ -227,23 +227,23 @@ const YourComponent = () => {
                   handleChange={(event) => handleChange(event, index, 'workload')}
                 />
               </td>
-              <td className="p-2 text-xs font-normal text-left">
+              <td className="text-xs font-normal text-center border">
                 {parseInt(row.difficulty) + parseInt(row.enjoyment) + parseInt(row.workload)}
               </td>
             </tr>
           ))}
           <tr>
-            <td className="p-2">
-              <Button className="p-0 bg-transparent border-none"
+            <td className="">
+              <Button className="bg-transparent border-none"
                 style={{ backgroundColor: 'transparent' }}
                 onClick={handleAddRow}><PlusSquare color="blue" size={15} style={{ backgroundColor: 'transparent' }} /></Button>
             </td>
-            <td className="p-2">
+            <td className="border" colSpan={5}>
               <Input
-                className="w-[200px] justify-between p-2 text-xs font-normal text-left"
+                className="w-[200px] justify-between p-2 text-xs font-normal text-left border-none"
                 type="text"
                 placeholder="Subject..."
-                // className="w-full p-1 border rounded-md"
+                defaultValue={""}
                 onChange={(val) => setNewSubject(val.target.value)}
               />
             </td>
