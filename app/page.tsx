@@ -1,275 +1,173 @@
 "use client"
-import React, { useEffect, useReducer } from "react";
-import "./style.css";
-import makeData from "./makeData";
-import Table from "./Table";
-import { randomColor, shortId } from "./utils";
-import { grey } from "./colors";
+import React, { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button"
+import { Check, ChevronsUpDown, PlusSquare, Trash2 } from "lucide-react"
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "add_option_to_column":
-      const optionIndex = state.columns.findIndex(
-        (column) => column.id === action.columnId
-      );
-      return {
-        ...state,
-        skipReset: true,
-        columns: [
-          ...state.columns.slice(0, optionIndex),
-          {
-            ...state.columns[optionIndex],
-            options: [
-              ...state.columns[optionIndex].options,
-              { label: action.option, backgroundColor: action.backgroundColor }
-            ]
-          },
-          ...state.columns.slice(optionIndex + 1, state.columns.length)
-        ]
-      };
-    case "add_row":
-      return {
-        ...state,
-        skipReset: true,
-        data: [...state.data, {}]
-      };
-    case "update_column_type":
-      const typeIndex = state.columns.findIndex(
-        (column) => column.id === action.columnId
-      );
-      switch (action.dataType) {
-        case "number":
-          if (state.columns[typeIndex].dataType === "number") {
-            return state;
-          } else {
-            return {
-              ...state,
-              columns: [
-                ...state.columns.slice(0, typeIndex),
-                { ...state.columns[typeIndex], dataType: action.dataType },
-                ...state.columns.slice(typeIndex + 1, state.columns.length)
-              ],
-              data: state.data.map((row) => ({
-                ...row,
-                [action.columnId]: isNaN(row[action.columnId])
-                  ? ""
-                  : Number.parseInt(row[action.columnId])
-              }))
-            };
-          }
-        case "select":
-          if (state.columns[typeIndex].dataType === "select") {
-            return {
-              ...state,
-              columns: [
-                ...state.columns.slice(0, typeIndex),
-                { ...state.columns[typeIndex], dataType: action.dataType },
-                ...state.columns.slice(typeIndex + 1, state.columns.length)
-              ],
-              skipReset: true
-            };
-          } else {
-            let options = [];
-            state.data.forEach((row) => {
-              if (row[action.columnId]) {
-                options.push({
-                  label: row[action.columnId],
-                  backgroundColor: randomColor()
-                });
-              }
-            });
-            return {
-              ...state,
-              columns: [
-                ...state.columns.slice(0, typeIndex),
-                {
-                  ...state.columns[typeIndex],
-                  dataType: action.dataType,
-                  options: [...state.columns[typeIndex].options, ...options]
-                },
-                ...state.columns.slice(typeIndex + 1, state.columns.length)
-              ],
-              skipReset: true
-            };
-          }
-        case "text":
-          if (state.columns[typeIndex].dataType === "text") {
-            return state;
-          } else if (state.columns[typeIndex].dataType === "select") {
-            return {
-              ...state,
-              skipReset: true,
-              columns: [
-                ...state.columns.slice(0, typeIndex),
-                { ...state.columns[typeIndex], dataType: action.dataType },
-                ...state.columns.slice(typeIndex + 1, state.columns.length)
-              ]
-            };
-          } else {
-            return {
-              ...state,
-              skipReset: true,
-              columns: [
-                ...state.columns.slice(0, typeIndex),
-                { ...state.columns[typeIndex], dataType: action.dataType },
-                ...state.columns.slice(typeIndex + 1, state.columns.length)
-              ],
-              data: state.data.map((row) => ({
-                ...row,
-                [action.columnId]: row[action.columnId] + ""
-              }))
-            };
-          }
-        default:
-          return state;
-      }
-    case "update_column_header":
-      const index = state.columns.findIndex(
-        (column) => column.id === action.columnId
-      );
-      return {
-        ...state,
-        skipReset: true,
-        columns: [
-          ...state.columns.slice(0, index),
-          { ...state.columns[index], label: action.label },
-          ...state.columns.slice(index + 1, state.columns.length)
-        ]
-      };
-    case "update_cell":
-      return {
-        ...state,
-        skipReset: true,
-        data: state.data.map((row, index) => {
-          if (index === action.rowIndex) {
-            return {
-              ...state.data[action.rowIndex],
-              [action.columnId]: action.value
-            };
-          }
-          return row;
-        })
-      };
-    case "add_column_to_left":
-      const leftIndex = state.columns.findIndex(
-        (column) => column.id === action.columnId
-      );
-      let leftId = shortId();
-      return {
-        ...state,
-        skipReset: true,
-        columns: [
-          ...state.columns.slice(0, leftIndex),
-          {
-            id: leftId,
-            label: "Column",
-            accessor: leftId,
-            dataType: "text",
-            created: action.focus && true,
-            options: []
-          },
-          ...state.columns.slice(leftIndex, state.columns.length)
-        ]
-      };
-    case "add_column_to_right":
-      const rightIndex = state.columns.findIndex(
-        (column) => column.id === action.columnId
-      );
-      const rightId = shortId();
-      return {
-        ...state,
-        skipReset: true,
-        columns: [
-          ...state.columns.slice(0, rightIndex + 1),
-          {
-            id: rightId,
-            label: "Column",
-            accessor: rightId,
-            dataType: "text",
-            created: action.focus && true,
-            options: []
-          },
-          ...state.columns.slice(rightIndex + 1, state.columns.length)
-        ]
-      };
-    case "delete_column":
-      const deleteIndex = state.columns.findIndex(
-        (column) => column.id === action.columnId
-      );
-      return {
-        ...state,
-        skipReset: true,
-        columns: [
-          ...state.columns.slice(0, deleteIndex),
-          ...state.columns.slice(deleteIndex + 1, state.columns.length)
-        ]
-      };
-    case "enable_reset":
-      return {
-        ...state,
-        skipReset: false
-      };
-    default:
-      return state;
-  }
-}
+import { cn } from "@/lib/utils"
 
-function App() {
-  const [state, dispatch] = useReducer(reducer, makeData(5));
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
-  useEffect(() => {
-    dispatch({ type: "enable_reset" });
-  }, [state.data, state.columns]);
+const difficultyOptions = [
+  { value: "1", label: "Easy" },
+  { value: "2", label: "Medium" },
+  { value: "3", label: "Hard" },
+]
+
+const enjoymentOptions = [
+  { value: "1", label: "Dislike" },
+  { value: "2", label: "Neutral" },
+  { value: "3", label: "Like" },
+]
+
+const workloadOptions = [
+  { value: "1", label: "Low" },
+  { value: "2", label: "Medium" },
+  { value: "3", label: "High" },
+]
+
+const Combobox = ({ data, value, setValue, handleChange }) => {
+  const [open, setOpen] = React.useState(false);
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        overflowX: "hidden"
-      }}
-    >
-      <div
-        style={{
-          height: 120,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column"
-        }}
-      >
-        <h1 style={{ color: grey(800) }}>Editable React Table</h1>
-      </div>
-      <div style={{ overflow: "auto", display: "flex" }}>
-        <div
-          style={{
-            flex: "1 1 auto",
-            padding: "1rem",
-            maxWidth: 1000,
-            marginLeft: "auto",
-            marginRight: "auto"
-          }}
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
         >
-          <Table
-            columns={state.columns}
-            data={state.data}
-            dispatch={dispatch}
-            skipReset={state.skipReset}
-          />
-        </div>
-      </div>
-      <div
-        style={{
-          height: 140,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column"
-        }}
-      >
-      </div>
-    </div>
+          {value
+            ? data.find((option) => option.value === value)?.label
+            : "Select..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandEmpty>No option found.</CommandEmpty>
+          <CommandGroup>
+            {data.map((option) => (
+              <CommandItem
+                key={option.value}
+                onSelect={(currentValue) => {
+                  setValue(currentValue === value ? "" : currentValue);
+                  setOpen(false);
+                  handleChange({ target: { value: option.value } });
+                }}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    value === option.value ? "opacity-100" : "opacity-0"
+                  )}
+                />
+                {option.label}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
 
-export default App;
+const YourComponent = () => {
+  const [data, setData] = useState([
+    {
+      subject: 'Business Management',
+      difficulty: "3",
+      enjoyment: "3",
+      workload: "2",
+    },
+    {
+      subject: 'Economics',
+      difficulty: "2",
+      enjoyment: "2",
+      workload: "1",
+    },
+  ]);
+
+  const handleChange = (event, index, key) => {
+    const newData = [...data];
+    newData[index][key] = event.target.value;
+    setData(newData);
+  };
+
+  return (
+    <div className="bg-white shadow-lg rounded-lg p-4">
+      <table className="w-full border-collapse">
+        <thead>
+          <tr>
+            <th className="p-2 text-left">Subject</th>
+            <th className="p-2 text-left">Difficulty</th>
+            <th className="p-2 text-left">Enjoyment</th>
+            <th className="p-2 text-left">Workload</th>
+            <th className="p-2 text-left">Rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, index) => (
+            <tr key={index}>
+              <td className="p-2">
+                <Input
+                  type="text"
+                  value={row.subject}
+                  onChange={(event) => handleChange(event, index, 'subject')}
+                  className="w-full p-1 border rounded-md"
+                />
+              </td>
+              <td className="p-2">
+                <Combobox
+                  data={difficultyOptions}
+                  value={row.difficulty}
+                  setValue={(value) =>
+                    handleChange({ target: { value } }, index, 'difficulty')
+                  }
+                  handleChange={(event) => handleChange(event, index, 'difficulty')}
+                />
+              </td>
+              <td className="p-2">
+                <Combobox
+                  data={enjoymentOptions}
+                  value={row.enjoyment}
+                  setValue={(value) =>
+                    handleChange({ target: { value } }, index, 'enjoyment')
+                  }
+                  handleChange={(event) => handleChange(event, index, 'enjoyment')}
+                />
+              </td>
+              <td className="p-2">
+                <Combobox
+                  data={workloadOptions}
+                  value={row.workload}
+                  setValue={(value) =>
+                    handleChange({ target: { value } }, index, 'workload')
+                  }
+                  handleChange={(event) => handleChange(event, index, 'workload')}
+                />
+              </td>
+              <td className="p-2">
+                {parseInt(row.difficulty) + parseInt(row.enjoyment) + parseInt(row.workload)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default YourComponent;
