@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from "@/components/ui/button"
-import { Check, ChevronsUpDown, PlusSquare, Trash2, ArrowUpDown } from "lucide-react"
+import { Check, ChevronDown, PlusSquare, Trash2, ArrowUpDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -74,7 +74,7 @@ const Combobox = ({
           {value
             ? data.find((option) => option.value === value)?.label
             : "Select..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
@@ -135,7 +135,7 @@ const YourComponent = () => {
   const [newSubject, setNewSubject] = useState(''); // State to hold the new subject
 
   const handleAddRow = () => {
-    const newRow = { subject: newSubject, difficulty: '', enjoyment: '', workload: '' };
+    const newRow = { subject: newSubject, difficulty: '1', enjoyment: '1', workload: '1' };
     const newData = [...data, newRow];
     setData(newData);
     setNewSubject(''); // Clear the input field
@@ -164,12 +164,12 @@ const YourComponent = () => {
       <table className="w-full border-collapse">
         <thead>
           <tr>
-            <th className="p-2 text-sm font-normal text-left "></th>
-            <th className="p-2 text-sm font-normal text-left">Subject</th>
-            <th className="p-2 text-sm font-normal text-left">Difficulty</th>
-            <th className="p-2 text-sm font-normal text-left">Enjoyment</th>
-            <th className="p-2 text-sm font-normal text-left">Workload</th>
-            <th className="p-2 text-sm font-normal text-right">Rank
+            <th className="px-4 text-sm font-normal text-left "></th>
+            <th className="px-4 bg-gray-50 border text-xs font-medium text-left">Subject</th>
+            <th className="px-4 bg-gray-50 border text-xs font-medium text-left">Difficulty</th>
+            <th className="px-4 bg-gray-50 border text-xs font-medium text-left">Enjoyment</th>
+            <th className="px-4 bg-gray-50 border text-xs font-medium text-left">Workload</th>
+            <th className="px-4 bg-gray-50 border text-xs font-medium text-right cursor-pointer" onClick={handleSort}>Rank
               <Button
                 onClick={handleSort}
                 className="bg-transparent border-none"
@@ -240,11 +240,17 @@ const YourComponent = () => {
             </td>
             <td className="border" colSpan={5}>
               <Input
-                className="w-[200px] justify-between p-2 text-xs font-normal text-left border-none"
+                className="w-[200px] justify-between p-2 text-xs font-normal text-left border-none focus:outline-none"
                 type="text"
                 placeholder="Subject..."
-                defaultValue={""}
+                value={newSubject}
                 onChange={(val) => setNewSubject(val.target.value)}
+                onKeyPress={(event) => {
+                  if (event.key === 'Enter') {
+                    handleAddRow();
+                    setNewSubject('');
+                  }
+                }}
               />
             </td>
           </tr>
