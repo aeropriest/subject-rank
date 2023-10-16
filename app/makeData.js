@@ -17,7 +17,6 @@ export default function makeData(count) {
 
     data.push(row);
   }
-
   let columns = [
     {
       id: "firstName",
@@ -67,5 +66,82 @@ export default function makeData(count) {
       dataType: "null",
     },
   ];
-  return { columns: columns, data: data, skipReset: false };
+  return {
+    columns: [
+      {
+        id: "subject",
+        label: "Subject",
+        accessor: "subject",
+        minWidth: 100,
+        dataType: "text",
+        options: [],
+      },
+      {
+        id: "difficulty",
+        label: "Difficulty",
+        accessor: "difficulty",
+        minWidth: 20,
+        dataType: "text",
+        options: [],
+      },
+      {
+        id: "enjoyment",
+        label: "Enjoyment",
+        accessor: "enjoyment",
+        minWidth: 20,
+        dataType: "text",
+        options: [],
+      },
+      {
+        id: "workload",
+        label: "Workload",
+        accessor: "workload",
+        minWidth: 20,
+        dataType: "text",
+        options: [],
+      },
+      {
+        id: "score",
+        label: "Score",
+        accessor: "score",
+        minWidth: 20,
+        dataType: "text",
+        options: [],
+      },
+    ],
+    data: [
+      {
+        subject: "Business Management",
+        difficulty: 3,
+        enjoyment: 4,
+        workload: 3,
+        score: 3,
+      },
+      // {
+      //   name: "Economics",
+      //   difficulty: 4,
+      //   enjoyment: 4,
+      //   workload: 3,
+      // },
+      // {
+      //   name: "Geography",
+      //   difficulty: 2,
+      //   enjoyment: 3,
+      //   workload: 2,
+      // },
+      // {
+      //   name: "History",
+      //   difficulty: 4,
+      //   enjoyment: 3,
+      //   workload: 4,
+      // },
+      // {
+      //   name: "Philosophy",
+      //   difficulty: 5,
+      //   enjoyment: 4,
+      //   workload: 5,
+      // },
+    ],
+    skipReset: false,
+  };
 }

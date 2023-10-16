@@ -215,7 +215,7 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, makeData(10));
+  const [state, dispatch] = useReducer(reducer, makeData(5));
 
   useEffect(() => {
     dispatch({ type: "enable_reset" });
@@ -267,15 +267,6 @@ function App() {
           flexDirection: "column"
         }}
       >
-        <p style={{ color: grey(600) }}>
-          Built by{" "}
-          <a
-            href="https://twitter.com/thesysarch"
-            style={{ color: grey(600), fontWeight: 600 }}
-          >
-            @thesysarch
-          </a>
-        </p>
       </div>
     </div>
   );
