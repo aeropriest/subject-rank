@@ -37,7 +37,29 @@ const workloadOptions = [
   { value: "3", label: "High" },
 ]
 
-const Combobox = ({ data, value, setValue, handleChange }) => {
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Row {
+  subject: string;
+  difficulty: string;
+  enjoyment: string;
+  workload: string;
+}
+
+const Combobox = ({
+  data,
+  value,
+  setValue,
+  handleChange,
+}: {
+  data: Option[];
+  value: string;
+  setValue: (value: string) => void;
+  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -48,7 +70,6 @@ const Combobox = ({ data, value, setValue, handleChange }) => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-
         >
           {value
             ? data.find((option) => option.value === value)?.label
@@ -67,7 +88,9 @@ const Combobox = ({ data, value, setValue, handleChange }) => {
                 onSelect={(currentValue) => {
                   setValue(currentValue === value ? "" : currentValue);
                   setOpen(false);
-                  handleChange({ target: { value: option.value } });
+                  handleChange({
+                    target: { value: option.value },
+                  } as React.ChangeEvent<HTMLInputElement>);
                 }}
               >
                 <Check
@@ -84,7 +107,8 @@ const Combobox = ({ data, value, setValue, handleChange }) => {
       </PopoverContent>
     </Popover>
   );
-}
+};
+
 
 const YourComponent = () => {
   const [data, setData] = useState([
@@ -94,23 +118,15 @@ const YourComponent = () => {
       enjoyment: "3",
       workload: "2",
     },
-    {
-      subject: 'Economics',
-      difficulty: "2",
-      enjoyment: "2",
-      workload: "1",
-    },
   ]);
 
-  const handleChange = (event, index, key) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, index: number, key: keyof Row) => {
     const newData = [...data];
     newData[index][key] = event.target.value;
     setData(newData);
   };
 
-
-
-  const handleDeleteRow = (index) => {
+  const handleDeleteRow = (index: number) => {
     const newData = [...data];
     newData.splice(index, 1);
     setData(newData);
@@ -186,7 +202,7 @@ const YourComponent = () => {
                   data={difficultyOptions}
                   value={row.difficulty}
                   setValue={(value) =>
-                    handleChange({ target: { value } }, index, 'difficulty')
+                    handleChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>, index, 'difficulty')
                   }
                   handleChange={(event) => handleChange(event, index, 'difficulty')}
                 />
@@ -196,7 +212,7 @@ const YourComponent = () => {
                   data={enjoymentOptions}
                   value={row.enjoyment}
                   setValue={(value) =>
-                    handleChange({ target: { value } }, index, 'enjoyment')
+                    handleChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>, index, 'enjoyment')
                   }
                   handleChange={(event) => handleChange(event, index, 'enjoyment')}
                 />
@@ -204,9 +220,9 @@ const YourComponent = () => {
               <td className="p-2">
                 <Combobox
                   data={workloadOptions}
-                  value={row.workload}
+                  value={row.enjoyment}
                   setValue={(value) =>
-                    handleChange({ target: { value } }, index, 'workload')
+                    handleChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>, index, 'workload')
                   }
                   handleChange={(event) => handleChange(event, index, 'workload')}
                 />
