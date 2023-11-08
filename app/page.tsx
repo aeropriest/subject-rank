@@ -20,9 +20,9 @@ import {
 } from "@/components/ui/popover"
 
 const difficultyOptions = [
-  { value: "1", label: "Easy" },
+  { value: "3", label: "Easy" },
   { value: "2", label: "Medium" },
-  { value: "3", label: "Hard" },
+  { value: "1", label: "Hard" },
 ]
 
 const enjoymentOptions = [
@@ -32,9 +32,9 @@ const enjoymentOptions = [
 ]
 
 const workloadOptions = [
-  { value: "1", label: "Low" },
+  { value: "3", label: "Low" },
   { value: "2", label: "Medium" },
-  { value: "3", label: "High" },
+  { value: "1", label: "High" },
 ]
 
 interface Option {
@@ -112,12 +112,7 @@ const Combobox = ({
 
 const YourComponent = () => {
   const [data, setData] = useState([
-    {
-      subject: 'Business Management',
-      difficulty: "3",
-      enjoyment: "3",
-      workload: "2",
-    },
+
   ]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, index: number, key: keyof Row) => {
@@ -169,7 +164,7 @@ const YourComponent = () => {
             <th className="px-4 bg-gray-50 border text-xs font-medium text-left">Difficulty</th>
             <th className="px-4 bg-gray-50 border text-xs font-medium text-left">Enjoyment</th>
             <th className="px-4 bg-gray-50 border text-xs font-medium text-left">Workload</th>
-            <th className="px-4 bg-gray-50 border text-xs font-medium text-right cursor-pointer" onClick={handleSort}>Rank
+            <th className="px-4 bg-gray-50 border text-xs font-medium text-right cursor-pointer" onClick={handleSort}>Score
               <Button
                 onClick={handleSort}
                 className="bg-transparent border-none"
@@ -220,7 +215,7 @@ const YourComponent = () => {
               <td className="border">
                 <Combobox
                   data={workloadOptions}
-                  value={row.enjoyment}
+                  value={row.workload}  // Corrected from value={row.enjoyment}
                   setValue={(value) =>
                     handleChange({ target: { value } } as React.ChangeEvent<HTMLInputElement>, index, 'workload')
                   }
