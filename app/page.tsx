@@ -111,15 +111,14 @@ const Combobox = ({
 
 
 const YourComponent = () => {
-  const [data, setData] = useState([
-
-  ]);
+  const [data, setData] = useState<Row[]>([]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, index: number, key: keyof Row) => {
-    const newData = [...data];
+    const newData = [...data] as Row[]; // Specify the type as Row[]
     newData[index][key] = event.target.value;
     setData(newData);
   };
+
 
   const handleDeleteRow = (index: number) => {
     const newData = [...data];
