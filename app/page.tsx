@@ -26,9 +26,9 @@ const difficultyOptions = [
 ]
 
 const enjoymentOptions = [
-  { value: "1", label: "Dislike" },
-  { value: "2", label: "Neutral" },
   { value: "3", label: "Like" },
+  { value: "2", label: "Neutral" },
+  { value: "1", label: "Dislike" },
 ]
 
 const workloadOptions = [
@@ -129,7 +129,7 @@ const YourComponent = () => {
   const [newSubject, setNewSubject] = useState(''); // State to hold the new subject
 
   const handleAddRow = () => {
-    const newRow = { subject: newSubject, difficulty: '1', enjoyment: '1', workload: '1' };
+    const newRow = { subject: newSubject, difficulty: '3', enjoyment: '3', workload: '3' };
     const newData = [...data, newRow];
     setData(newData);
     setNewSubject(''); // Clear the input field
